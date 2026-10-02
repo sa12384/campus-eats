@@ -27,3 +27,15 @@ exports.cancelOrder = async (req, res) => {
   await Order.cancelOrder(req.params.id);   
   res.redirect('/'); 
 }; 
+
+exports.createOrder = async (req, res) => {
+  const { itemId } = req.body;
+
+  const item = await MenuItem.getMenuItemById(itemId);
+  if (!item) {
+    return res.status(400).send('Invalid menu item.');
+  }
+
+  const order = await Order.createOrder(item.id, item.price, req.session.user.id);
+  res.redirect(`/orders/${order.id}`);
+};
