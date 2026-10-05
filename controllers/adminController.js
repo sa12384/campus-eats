@@ -1,5 +1,6 @@
 const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
+const Feedback = require('../models/Feedback');
 
 exports.dashboard = async (req, res) => {
   const restaurant = await Restaurant.getRestaurantByOwnerId(
@@ -10,16 +11,22 @@ exports.dashboard = async (req, res) => {
     return res.render('admin-dashboard', {
       title: 'My Dashboard',
       restaurant: null,
-      items: []
+      items: [],
+      feedback: []
     });
   }
 
   const items = await MenuItem.getMenuByRestaurant(restaurant.id);
 
+  const feedback = await Feedback.getFeedbackForRestaurant(
+    restaurant.id
+  );
+
   res.render('admin-dashboard', {
     title: 'My Dashboard',
     restaurant,
-    items
+    items,
+    feedback
   });
 };
 

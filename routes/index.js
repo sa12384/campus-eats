@@ -16,6 +16,11 @@ const {
 } = require('../middleware/auth');
 
 
+const { connectMongo } = require('../config/mongo');
+
+const feedbackController = require('../controllers/feedbackController');
+
+
 // Home
 router.get('/', homeController.getHome);
 router.get('/about', aboutController.getAbout);
@@ -79,6 +84,16 @@ router.post(
     requireSuperAdmin,
     superAdminController.grantAdmin
 );
+
+
+router.get('/mongo-test', async (req, res) => {
+  const db = await connectMongo();
+  const collections = await db.listCollections().toArray();
+  res.json({ connected: true, collections });
+});
+
+
+router.post('/restaurants/:id/feedback', feedbackController.submitFeedback);
 
 
 // Export router
