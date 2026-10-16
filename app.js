@@ -9,8 +9,8 @@ const { connectMongo } = require('./config/mongo');
 
 if (process.env.NODE_ENV !== 'test') {
   connectMongo().catch(err =>
-    console.error('MongoDB connection failed:', err)
-  );
+  console.error('MongoDB connection failed:', err)
+);
 }
 
 
