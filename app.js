@@ -3,6 +3,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const { connectMongo } = require('./config/mongo');
+
 
 
 if (process.env.NODE_ENV !== 'test') {
