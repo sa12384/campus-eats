@@ -4,8 +4,13 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 
-const { connectMongo } = require('./config/mongo');
-connectMongo().catch(err => console.error('MongoDB connection failed:', err));
+
+if (process.env.NODE_ENV !== 'test') {
+  connectMongo().catch(err =>
+    console.error('MongoDB connection failed:', err)
+  );
+}
+
 
 
 const app = express();
@@ -45,7 +50,4 @@ app.use('/api', apiRoutes);
 
 
 
-app.listen(PORT, () => {
-  console.log(`Campus Eats running at http://localhost:${PORT}`);
-});
-
+module.exports = app;

@@ -1,14 +1,16 @@
+
 const crypto = require('crypto');
 const User = require('../models/User');
+
+const {
+  isValidSherubtseEmail,
+  EMAIL_SUFFIX
+} = require('../utils/validators');
 
 const {
   sendVerificationEmail,
   sendPasswordResetEmail
 } = require('../config/mailer');
-
-const EMAIL_SUFFIX = '.sherubtse@rub.edu.bt';
-
-
 
 
 exports.showSignup = (req, res) => {
@@ -29,7 +31,8 @@ exports.signup = async (req, res) => {
     });
   }
 
-  if (!email.toLowerCase().endsWith(EMAIL_SUFFIX)) {
+  // Validate Sherubtse College email
+  if (!isValidSherubtseEmail(email)) {
     return res.render('signup', {
       title: 'Sign Up',
       error: `Please use your Sherubtse College email, ending in ${EMAIL_SUFFIX}.`
@@ -63,8 +66,6 @@ exports.signup = async (req, res) => {
 };
 
 
-
-
 exports.verifyEmail = async (req, res) => {
   const user = await User.markVerified(req.params.token);
 
@@ -79,8 +80,6 @@ exports.verifyEmail = async (req, res) => {
     user
   });
 };
-
-
 
 
 exports.showLogin = (req, res) => {
@@ -128,15 +127,11 @@ exports.login = async (req, res) => {
 };
 
 
-
-
 exports.logout = (req, res) => {
   req.session.destroy(() => {
     res.redirect('/');
   });
 };
-
-
 
 
 exports.showForgotPassword = (req, res) => {
@@ -176,8 +171,6 @@ exports.forgotPassword = async (req, res) => {
     message: 'If an account exists with that email, a reset link has been sent.'
   });
 };
-
-
 
 
 exports.showResetPassword = async (req, res) => {

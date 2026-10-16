@@ -1,26 +1,29 @@
-const db = require('../config/db');
+const { getDb } = require('../config/mongo');
 
-exports.createFeedback = (data) => {
-    return db.one(
-        `INSERT INTO feedback
-        (restaurant_id, customer_name, rating, comment)
-        VALUES ($1, $2, $3, $4)
-        RETURNING *`,
-        [
-            data.restaurantId,
-            data.customerName,
-            data.rating,
-            data.comment || ''
-        ]
-    );
+exports.createFeedback = async (data) => {
+    const db = getDb();
+
+    const feedback = {
+        restaurantId: Number(data.restaurantId),
+        customerName: data.customerName,
+        rating: Number(data.rating),
+        comment: data.comment || '',
+        createdAt: new Date()
+    };
+
+    const result = await db.collection('feedback').insertOne(feedback);
+
+    return {
+        _id: result.insertedId,
+        ...feedback
+    };
 };
 
-exports.getFeedbackForRestaurant = (restaurantId) => {
-    return db.any(
-        `SELECT *
-         FROM feedback
-         WHERE restaurant_id = $1
-         ORDER BY created_at DESC`,
-        [restaurantId]
-    );
+exports.getFeedbackForRestaurant = async (restaurantId) => {
+    const db = getDb();
+
+    return await db.collection('feedback')
+        .find({ restaurantId: Number(restaurantId) })
+        .sort({ createdAt: -1 })
+        .toArray();
 };
